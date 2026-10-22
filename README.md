@@ -1,5 +1,7 @@
 # 移动端 Vue3 网页节拍器 - 功能实现规格说明
 
+> **在线预览（已部署）：** [https://smallteddy.github.io/metronome/](https://smallteddy.github.io/metronome/)
+
 ## 一、项目概述
 基于 Vue3 + Vite + TypeScript 的移动端网页节拍器应用，纯前端实现，无后端依赖，支持离线使用（PWA可选）。核心目标是提供精准、流畅、易用的节拍训练工具。
 
