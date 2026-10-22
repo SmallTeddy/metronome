@@ -31,31 +31,33 @@ function onMain() {
 
 <template>
   <div class="transport">
-    <button
-      class="pause-btn"
-      :class="{ hidden: store.transport !== 'playing' }"
-      aria-label="暂停 / 继续"
-      @click="emit('pause')"
-    >
-      ❚❚
-    </button>
+    <div class="transport-main">
+      <button
+        class="pause-btn"
+        :class="{ hidden: store.transport !== 'playing' }"
+        aria-label="暂停 / 继续"
+        @click="emit('pause')"
+      >
+        ❚❚
+      </button>
 
-    <button
-      class="main-btn"
-      :class="{
-        playing: store.transport === 'playing',
-        paused: store.transport === 'paused'
-      }"
-      :aria-label="store.transport === 'playing' ? '停止' : '开始'"
-      @click="onMain"
-    >
-      <span v-if="store.transport === 'playing'" class="stop-icon">■</span>
-      <span v-else-if="store.transport === 'paused'" class="play-icon">▶</span>
-      <span v-else class="play-icon">▶</span>
-    </button>
+      <button
+        class="main-btn"
+        :class="{
+          playing: store.transport === 'playing',
+          paused: store.transport === 'paused'
+        }"
+        :aria-label="store.transport === 'playing' ? '停止' : '开始'"
+        @click="onMain"
+      >
+        <span v-if="store.transport === 'playing'" class="stop-icon">■</span>
+        <span v-else-if="store.transport === 'paused'" class="play-icon">▶</span>
+        <span v-else class="play-icon">▶</span>
+      </button>
+    </div>
 
     <div class="state-label">
-      {{ store.transport === 'playing' ? '播放中 · 双击停止回到第 1 拍' : store.transport === 'paused' ? '已暂停' : '停止' }}
+      {{ store.transport === 'playing' ? '播放中 · 双击停止回第 1 拍' : store.transport === 'paused' ? '已暂停' : '停止' }}
     </div>
   </div>
 </template>
@@ -65,13 +67,17 @@ function onMain() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 6px 0;
+  gap: 3px;
+  flex: 0 0 auto;
+}
+
+.transport-main {
+  position: relative;
 }
 
 .main-btn {
-  width: 92px;
-  height: 92px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
   border: none;
   background: linear-gradient(145deg, #22d3ee, #0284c7);
@@ -99,44 +105,65 @@ function onMain() {
 }
 
 .play-icon {
-  font-size: 40px;
+  font-size: 34px;
   margin-left: 4px;
 }
 
 .stop-icon {
-  font-size: 34px;
+  font-size: 28px;
 }
 
 .pause-btn {
-  position: relative;
-  width: 56px;
-  height: 56px;
+  position: absolute;
+  left: -58px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 1px solid var(--border);
   background: var(--surface-2);
   color: var(--text);
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   display: grid;
   place-items: center;
   transition:
     opacity 0.2s,
     transform 0.1s;
+  z-index: 1;
 }
 
 .pause-btn.hidden {
   opacity: 0;
   pointer-events: none;
-  position: absolute;
 }
 
 .pause-btn:active {
-  transform: scale(0.92);
+  transform: translateY(-50%) scale(0.92);
 }
 
 .state-label {
   color: var(--text-dim);
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+@media (max-height: 640px) {
+  .main-btn {
+    width: 72px;
+    height: 72px;
+  }
+
+  .pause-btn {
+    width: 42px;
+    height: 42px;
+    left: -52px;
+  }
+
+  .state-label {
+    display: none;
+  }
 }
 </style>

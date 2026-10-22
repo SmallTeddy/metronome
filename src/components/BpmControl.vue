@@ -148,44 +148,47 @@ onBeforeUnmount(() => {
       ＋
     </button>
 
-    <input
-      class="bpm-slider"
-      type="range"
-      :min="BPM_MIN"
-      :max="BPM_MAX"
-      step="1"
-      :value="store.bpm"
-      aria-label="速度滑杆"
-      @input="store.setBpm(Number(($event.target as HTMLInputElement).value))"
-    />
+    <div class="bpm-bottom">
+      <input
+        class="bpm-slider"
+        type="range"
+        :min="BPM_MIN"
+        :max="BPM_MAX"
+        step="1"
+        :value="store.bpm"
+        aria-label="速度滑杆"
+        @input="store.setBpm(Number(($event.target as HTMLInputElement).value))"
+      />
 
-    <button class="tap-btn" @click="onTap">TAP 定速</button>
+      <button class="tap-btn" @click="onTap">TAP</button>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .bpm-control {
   display: grid;
-  grid-template-columns: 64px 1fr 64px;
-  grid-template-rows: auto auto auto;
-  gap: 12px;
+  grid-template-columns: 56px 1fr 56px;
+  grid-template-rows: auto auto;
+  gap: 6px;
   align-items: center;
 }
 
 .bpm-btn {
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   border: none;
   background: var(--surface-2);
   color: var(--text);
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 700;
   cursor: pointer;
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
   transition: transform 0.08s;
+  justify-self: center;
 }
 
 .bpm-btn:active {
@@ -196,19 +199,17 @@ onBeforeUnmount(() => {
 
 .minus {
   grid-column: 1;
-  grid-row: 1 / 3;
-  align-self: center;
+  grid-row: 1;
 }
 
 .plus {
   grid-column: 3;
-  grid-row: 1 / 3;
-  align-self: center;
+  grid-row: 1;
 }
 
 .bpm-display {
   grid-column: 2;
-  grid-row: 1 / 3;
+  grid-row: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -218,11 +219,11 @@ onBeforeUnmount(() => {
 
 .bpm-symbol {
   color: var(--text-dim);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .bpm-number {
-  font-size: 74px;
+  font-size: clamp(50px, 15vw, 66px);
   font-weight: 800;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -266,9 +267,9 @@ onBeforeUnmount(() => {
 }
 
 .bpm-input {
-  width: 150px;
+  width: 140px;
   text-align: center;
-  font-size: 60px;
+  font-size: clamp(42px, 13vw, 56px);
   font-weight: 800;
   background: transparent;
   border: none;
@@ -283,21 +284,30 @@ onBeforeUnmount(() => {
   -webkit-appearance: none;
 }
 
-.bpm-slider {
+.bpm-bottom {
   grid-column: 1 / 4;
-  width: 100%;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bpm-slider {
+  flex: 1;
+  min-width: 0;
   accent-color: var(--accent);
-  height: 44px;
+  height: 38px;
 }
 
 .tap-btn {
-  grid-column: 1 / 4;
-  min-height: 48px;
-  border-radius: 14px;
+  flex: 0 0 auto;
+  min-width: 92px;
+  min-height: 38px;
+  border-radius: 12px;
   border: 1px dashed var(--border);
   background: var(--surface-2);
   color: var(--text-dim);
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 2px;
   cursor: pointer;
@@ -307,5 +317,16 @@ onBeforeUnmount(() => {
 .tap-btn:active {
   color: var(--text);
   border-color: var(--accent);
+}
+
+@media (max-height: 640px) {
+  .bpm-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .bpm-number {
+    font-size: clamp(42px, 13vw, 54px);
+  }
 }
 </style>

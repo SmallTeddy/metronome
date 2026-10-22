@@ -49,7 +49,7 @@ const accentBeats = (): number[] => Array.from({ length: store.beats }, (_, i) =
           :class="{ active: store.accents.includes(b) }"
           @click="store.toggleAccent(b)"
         >
-          第{{ b + 1 }}拍
+          {{ b + 1 }}
         </button>
       </div>
     </div>
@@ -60,38 +60,38 @@ const accentBeats = (): number[] => Array.from({ length: store.beats }, (_, i) =
 .ts-picker {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
 .ts-row {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 6px;
 }
 
 .row-label {
-  flex: 0 0 44px;
-  padding-top: 13px;
+  flex: 0 0 40px;
+  padding-top: 9px;
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   flex: 1;
 }
 
 .chip {
-  min-height: 42px;
-  padding: 0 14px;
-  border-radius: 11px;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 9px;
   border: 1px solid var(--border);
   background: var(--surface-2);
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
@@ -106,5 +106,20 @@ const accentBeats = (): number[] => Array.from({ length: store.beats }, (_, i) =
 .chip.accent.active {
   background: var(--strong);
   border-color: var(--strong);
+}
+
+@media (max-height: 640px) {
+  .ts-picker {
+    gap: 4px;
+  }
+
+  .row-label {
+    padding-top: 7px;
+  }
+
+  .chip {
+    min-height: 28px;
+    padding: 0 8px;
+  }
 }
 </style>

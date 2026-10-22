@@ -41,13 +41,13 @@ const subProgress = computed(() => store.currentPosition % store.subdivisionFact
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 76px;
+  min-height: 58px;
 }
 
 .breathing {
   position: absolute;
-  width: 70px;
-  height: 70px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   border: 2px solid var(--accent);
   opacity: 0;
@@ -74,15 +74,15 @@ const subProgress = computed(() => store.currentPosition % store.subdivisionFact
 
 .dots {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   align-items: center;
   justify-content: center;
   z-index: 1;
 }
 
 .dot {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--muted-bg);
   border: 2px solid var(--border);

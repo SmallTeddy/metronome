@@ -40,6 +40,7 @@ function save() {
   store.savePreset(name)
   nameDraft.value = ''
   showInput.value = false
+  selectedId.value = store.presets[store.presets.length - 1]?.id ?? null
 }
 
 // 左右滑动切换预设
@@ -69,21 +70,35 @@ function onTouchEnd(e: TouchEvent) {
 
 <template>
   <div class="presets">
-    <div class="presets-head">
-      <span class="title">速度术语</span>
-      <button class="save-btn" @click="showInput = true">＋ 保存当前</button>
-    </div>
-
-    <div class="chips-row">
+    <div
+      class="preset-strip"
+      @touchstart.passive="onTouchStart"
+      @touchend.passive="onTouchEnd"
+    >
       <button
         v-for="term in TEMPO_TERMS"
         :key="term.name"
-        class="chip"
+        class="chip term"
         :class="{ active: flashTerm === term.name }"
         @click="applyTempoTerm(term)"
       >
         {{ term.name }} <b>{{ term.bpm }}</b>
       </button>
+
+      <button
+        v-for="p in savedPresets"
+        :key="p.id"
+        class="chip preset-chip"
+        :class="{ active: selectedId === p.id }"
+        @click="applyPreset(p)"
+      >
+        <span class="p-name">{{ p.name }}</span>
+        <span class="p-del" role="button" aria-label="删除预设" @click.stop="removePreset(p.id)">
+          ✕
+        </span>
+      </button>
+
+      <button class="chip save-chip" @click="showInput = true">＋ 保存</button>
     </div>
 
     <Transition name="row">
@@ -99,38 +114,6 @@ function onTouchEnd(e: TouchEvent) {
         <button class="chip" @click="showInput = false">取消</button>
       </div>
     </Transition>
-
-    <template v-if="savedPresets.length > 0">
-      <div class="presets-head sub">
-        <span class="title">我的预设（左右滑动切换）</span>
-        <span class="count">{{ savedPresets.length }}</span>
-      </div>
-      <div
-        class="preset-list"
-        @touchstart.passive="onTouchStart"
-        @touchend.passive="onTouchEnd"
-      >
-        <div
-          v-for="p in savedPresets"
-          :key="p.id"
-          class="preset-item"
-          :class="{ active: selectedId === p.id }"
-          @click="applyPreset(p)"
-        >
-          <span class="p-name">{{ p.name }}</span>
-          <span class="p-meta">
-            {{ p.bpm }} BPM · {{ p.beats }}/{{ p.unit }}
-          </span>
-          <button
-            class="p-del"
-            aria-label="删除预设"
-            @click.stop="removePreset(p.id)"
-          >
-            ✕
-          </button>
-        </div>
-      </div>
-    </template>
   </div>
 </template>
 
@@ -138,71 +121,47 @@ function onTouchEnd(e: TouchEvent) {
 .presets {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
-.presets-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.presets-head.sub {
-  margin-top: 4px;
-}
-
-.title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-}
-
-.count {
-  color: var(--text-dim);
-  font-size: 12px;
-}
-
-.save-btn {
-  min-height: 40px;
-  padding: 0 14px;
-  border-radius: 10px;
-  border: 1px dashed var(--accent);
-  background: transparent;
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.chips-row {
+.preset-strip {
   display: flex;
   gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  padding-bottom: 2px;
+  /* 右侧淡出，提示可继续滑动 */
+  mask-image: linear-gradient(to right, black 0, black calc(100% - 30px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 0, black calc(100% - 30px), transparent 100%);
 }
 
-.chips-row::-webkit-scrollbar {
+.preset-strip::-webkit-scrollbar {
   display: none;
 }
 
 .chip {
   flex: 0 0 auto;
-  min-height: 42px;
-  padding: 0 14px;
+  min-height: 38px;
+  padding: 0 12px;
   border-radius: 11px;
   border: 1px solid var(--border);
   background: var(--surface-2);
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  touch-action: pan-x;
+  transition: all 0.15s;
 }
 
 .chip b {
   color: var(--text);
-  margin-left: 4px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -216,6 +175,39 @@ function onTouchEnd(e: TouchEvent) {
   color: #fff;
 }
 
+.preset-chip {
+  padding-right: 8px;
+}
+
+.p-name {
+  max-width: 88px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.p-del {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  color: var(--text-dim);
+  background: var(--muted-bg);
+  flex: 0 0 auto;
+}
+
+.preset-chip.active .p-del {
+  color: #fff;
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.save-chip {
+  border-style: dashed;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .save-row {
   display: flex;
   gap: 8px;
@@ -223,76 +215,20 @@ function onTouchEnd(e: TouchEvent) {
 
 .save-row input {
   flex: 1;
-  min-height: 44px;
+  min-width: 0;
+  min-height: 40px;
   border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--surface-2);
   color: var(--text);
   padding: 0 12px;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .chip.primary {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
-}
-
-.preset-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 180px;
-  overflow-y: auto;
-  touch-action: pan-y;
-}
-
-.preset-item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 6px 44px 6px 14px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  cursor: pointer;
-  touch-action: pan-y;
-}
-
-.preset-item.active {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
-}
-
-.p-name {
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.p-meta {
-  color: var(--text-dim);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-}
-
-.p-del {
-  position: absolute;
-  right: 6px;
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: transparent;
-  color: var(--text-dim);
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 8px;
-}
-
-.p-del:active {
-  color: var(--danger);
-  background: var(--muted-bg);
 }
 
 .row-enter-active,
@@ -304,5 +240,11 @@ function onTouchEnd(e: TouchEvent) {
 .row-leave-to {
   opacity: 0;
   transform: translateY(-4px);
+}
+
+@media (max-height: 640px) {
+  .chip {
+    min-height: 32px;
+  }
 }
 </style>

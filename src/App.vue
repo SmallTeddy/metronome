@@ -127,39 +127,32 @@ onBeforeUnmount(() => {
     <main class="app-main">
       <p v-if="store.errorMsg" class="toast">{{ store.errorMsg }}</p>
 
-      <section class="panel bpm-panel">
-        <BpmControl />
-      </section>
-
-      <section class="panel">
-        <TimeSignaturePicker />
-      </section>
-
-      <section class="panel beat-panel">
+      <section class="beat-section">
         <BeatIndicator />
       </section>
 
-      <section class="panel">
-        <TransportControls
-          @toggle-main="onToggleMain"
-          @pause="onPause"
-          @reset="onReset"
-        />
+      <section class="bpm-section">
+        <BpmControl />
       </section>
 
-      <section class="panel">
+      <section class="rhythm-section">
+        <TimeSignaturePicker />
+      </section>
+
+      <section class="preset-section">
         <PresetManager />
       </section>
     </main>
 
-    <footer class="app-footer">
-      <div class="sound-row">
+    <footer class="app-deck">
+      <div class="vol-block">
         <button
-          class="chip chip-sound"
-          :class="{ active: store.muted }"
+          class="icon-btn mute-btn"
+          :class="{ muted: store.muted }"
+          aria-label="静音"
           @click="store.toggleMute"
         >
-          {{ store.muted ? '🔇 静音' : '🔊 ' + store.currentSound.name }}
+          {{ store.muted ? '🔇' : '🔊' }}
         </button>
         <input
           class="vol-slider"
@@ -172,6 +165,14 @@ onBeforeUnmount(() => {
         />
         <span class="vol-label">{{ store.volume }}</span>
       </div>
+
+      <TransportControls
+        @toggle-main="onToggleMain"
+        @pause="onPause"
+        @reset="onReset"
+      />
+
+      <span class="deck-spacer" aria-hidden="true" />
     </footer>
 
     <SettingsPanel v-model:open="showSettings" />
@@ -180,17 +181,18 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .app {
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
   padding:
-    calc(env(safe-area-inset-top, 0px) + 12px)
+    calc(env(safe-area-inset-top, 0px) + 10px)
     calc(env(safe-area-inset-right, 0px) + 16px)
-    calc(env(safe-area-inset-bottom, 0px) + 16px)
+    calc(env(safe-area-inset-bottom, 0px) + 10px)
     calc(env(safe-area-inset-left, 0px) + 16px);
   max-width: 520px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 8px;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
@@ -200,20 +202,21 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex: none;
 }
 
 .app-title {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
 .app-logo {
   color: var(--accent);
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .header-actions {
@@ -222,23 +225,17 @@ onBeforeUnmount(() => {
 }
 
 .icon-btn {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 40px;
+  min-height: 40px;
   border-radius: 12px;
   background: var(--surface-2);
   color: var(--text);
-  font-size: 18px;
+  font-size: 17px;
   display: grid;
   place-items: center;
   border: none;
   cursor: pointer;
-}
-
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 14px;
+  flex: 0 0 auto;
 }
 
 .toast {
@@ -256,49 +253,86 @@ onBeforeUnmount(() => {
   max-width: 90%;
 }
 
-.app-footer {
-  margin-top: auto;
+.app-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  justify-content: space-evenly;
 }
 
-.sound-row {
-  display: flex;
+.beat-section,
+.bpm-section,
+.rhythm-section,
+.preset-section {
+  flex: none;
+}
+
+.app-deck {
+  flex: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
 }
 
-.chip {
-  min-height: 44px;
-  padding: 0 16px;
-  border-radius: 12px;
-  background: var(--surface-2);
-  color: var(--text);
-  border: 1px solid var(--border);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
+.vol-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
-.chip-sound {
-  min-width: 128px;
+.deck-spacer {
+  visibility: hidden;
 }
 
-.chip-sound.active {
-  background: var(--muted-bg);
-  color: var(--muted-text);
+.mute-btn.muted {
+  opacity: 0.55;
 }
 
 .vol-slider {
   flex: 1;
-  min-width: 140px;
+  min-width: 0;
   accent-color: var(--accent);
-  height: 44px;
+  height: 40px;
 }
 
 .vol-label {
-  min-width: 34px;
+  width: 30px;
   text-align: right;
   font-variant-numeric: tabular-nums;
   color: var(--text-dim);
+  font-size: 12px;
+}
+
+/* 短屏（如 iPhone SE / 小屏安卓）压缩布局，保证一屏无滚动 */
+@media (max-height: 640px) {
+  .app {
+    gap: 4px;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 6px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);
+  }
+
+  .app-main {
+    gap: 4px;
+  }
+
+  .icon-btn {
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .vol-slider {
+    height: 34px;
+  }
+}
+
+@media (max-width: 360px) {
+  .vol-label {
+    display: none;
+  }
 }
 </style>
