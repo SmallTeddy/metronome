@@ -254,6 +254,10 @@ export const useMetronomeStore = defineStore('metronome', () => {
     }
   }
 
+  function setTransport(s: TransportState) {
+    transport.value = s
+  }
+
   function resetTransport() {
     transport.value = 'stopped'
     currentBeat.value = 0
@@ -313,6 +317,7 @@ export const useMetronomeStore = defineStore('metronome', () => {
     deletePreset,
     applyPreset,
     applyBeat,
+    setTransport,
     resetTransport,
     setError,
     persist

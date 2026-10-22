@@ -10,20 +10,21 @@ const emit = defineEmits<{
 
 const store = useMetronomeStore()
 
-let lastStopTap = 0
+let lastStopTime = 0
 
 function onMain() {
+  const now = performance.now()
   if (store.transport === 'playing') {
-    // 双击停止：回到第 1 拍
-    const now = performance.now()
-    if (now - lastStopTap < 300) {
-      lastStopTap = 0
+    // 播放中：单击即停止，并记录时间，供「双击停止」手势判定
+    lastStopTime = now
+    emit('toggleMain')
+  } else {
+    // 停止后 300ms 内的点击视为「双击停止」的第二下：保持停止并回到第 1 拍，不要重新开始
+    if (now - lastStopTime < 300) {
+      lastStopTime = 0
       emit('reset')
       return
     }
-    lastStopTap = now
-    emit('toggleMain')
-  } else {
     emit('toggleMain')
   }
 }

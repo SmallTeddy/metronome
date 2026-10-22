@@ -75,6 +75,12 @@ function onBeforeUnload() {
   void wake.release()
 }
 
+// 引擎内部状态同步到 UI（音频引擎是状态的单一事实来源）
+watch(
+  () => engine.state.value,
+  (s) => store.setTransport(s)
+)
+
 watch(
   () => store.transport,
   (s) => {
