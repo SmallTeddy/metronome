@@ -1,0 +1,59 @@
+:root {
+  --bg: #0b1220;
+  --surface: #111a2e;
+  --surface-2: #1a2538;
+  --border: #24314d;
+  --text: #e8eef8;
+  --text-dim: #8fa3c4;
+  --accent: #38bdf8;
+  --strong: #ef4444;
+  --weak: #38bdf8;
+  --muted-bg: #2a3346;
+  --muted-text: #94a3b8;
+  --danger: #f43f5e;
+}
+
+:root[data-theme='light'] {
+  --bg: #f2f5fa;
+  --surface: #ffffff;
+  --surface-2: #eef2f8;
+  --border: #dbe3ef;
+  --text: #16233c;
+  --text-dim: #64748b;
+  --accent: #0284c7;
+  --strong: #dc2626;
+  --weak: #0284c7;
+  --muted-bg: #e2e8f0;
+  --muted-text: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+#app {
+  min-height: 100dvh;
+}
+
+input,
+button {
+  font-family: inherit;
+}
+
+input[type='range'] {
+  touch-action: none;
+}
